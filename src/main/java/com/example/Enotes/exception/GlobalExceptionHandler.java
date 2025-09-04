@@ -3,6 +3,8 @@ package com.example.Enotes.exception;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageConversionException;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
@@ -27,12 +29,17 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(ResourceAlreadyExists.class)
-    public ResponseEntity<?> handleResourceAlreadyExists(Exception e){
+    public ResponseEntity<?> handleResourceAlreadyExists(ResourceAlreadyExists e){
         return new ResponseEntity<>(e.getMessage(),HttpStatus.CONFLICT);
     }
 
     @ExceptionHandler(ValidationException.class)
     public ResponseEntity<?> handleValidationException(ValidationException e){
         return new ResponseEntity<>(e.getError(),HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<?> handleHttpMessageConversionException(HttpMessageNotReadableException e){
+        return new ResponseEntity<>(e.getMessage(),HttpStatus.BAD_REQUEST);
     }
 }

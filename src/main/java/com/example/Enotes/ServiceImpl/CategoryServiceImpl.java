@@ -3,6 +3,7 @@ package com.example.Enotes.ServiceImpl;
 import com.example.Enotes.dto.CategoryDto;
 import com.example.Enotes.dto.CategoryResponse;
 import com.example.Enotes.entity.Category;
+import com.example.Enotes.exception.ResourceAlreadyExists;
 import com.example.Enotes.exception.ResourceNotFoundException;
 import com.example.Enotes.repository.CategoryRepository;
 import com.example.Enotes.service.CategoryService;
@@ -32,6 +33,13 @@ public class CategoryServiceImpl implements CategoryService {
     public Boolean saveCategory(CategoryDto categoryDto) {
         //Validation Checking
         validation.categoryValidation(categoryDto);
+
+        //check category exist or not
+        Boolean check = categoryRepository.existsByName(categoryDto.getName().trim());
+        if(check){
+            //throw exception
+            throw new ResourceAlreadyExists("Category Already exists");
+        }
 
         Category category = mapper.map(categoryDto,Category.class);
 
