@@ -5,6 +5,7 @@ import com.example.Enotes.dto.CategoryResponse;
 import com.example.Enotes.entity.Category;
 import com.example.Enotes.exception.ResourceNotFoundException;
 import com.example.Enotes.service.CategoryService;
+import com.example.Enotes.util.CommonUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,9 +27,11 @@ public class CategoryController {
     public ResponseEntity<?> saveCategory(@RequestBody CategoryDto categoryDto){
         Boolean saveCategory = categoryService.saveCategory(categoryDto);
         if(saveCategory){
-            return new ResponseEntity<>("saved successfully", HttpStatus.CREATED);
+            return CommonUtil.createBuildResponseMessage("saved success",HttpStatus.CREATED);
+//            return new ResponseEntity<>("saved successfully", HttpStatus.CREATED);
         }
-        return new ResponseEntity<>("Not saved", HttpStatus.INTERNAL_SERVER_ERROR);
+        return CommonUtil.createErrorResponseMessage("not saved",HttpStatus.INTERNAL_SERVER_ERROR);
+//        return new ResponseEntity<>("Not saved", HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @GetMapping("/")
@@ -37,7 +40,8 @@ public class CategoryController {
         if(CollectionUtils.isEmpty(categoriesDto)){
             return ResponseEntity.noContent().build();
         }
-        return new ResponseEntity<>(categoriesDto, HttpStatus.OK);
+        return  CommonUtil.createBuildResponse(categoriesDto,HttpStatus.OK);
+//        return new ResponseEntity<>(categoriesDto, HttpStatus.OK);
     }
 
     @GetMapping("/active")
@@ -46,31 +50,20 @@ public class CategoryController {
         if(CollectionUtils.isEmpty(categoriesDto)){
             return ResponseEntity.noContent().build();
         }
-        return new ResponseEntity<>(categoriesDto, HttpStatus.OK);
+        return  CommonUtil.createBuildResponse(categoriesDto,HttpStatus.OK);
+//        return new ResponseEntity<>(categoriesDto, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getCategoryDetailsById(@PathVariable Integer id) throws Exception{
-//        try{
-//            CategoryDto categoryDto = categoryService.getCategoryById(id);
-//            if(ObjectUtils.isEmpty(categoryDto)){
-//                return new ResponseEntity<>("Category not found with id="+id,HttpStatus.NOT_FOUND);
-//            }
-//            return new ResponseEntity<>(categoryDto,HttpStatus.OK);
-//
-//        } catch (ResourceNotFoundException e) {
-//            return new ResponseEntity<>(e.getMessage(),HttpStatus.NOT_FOUND);
-//        } catch (Exception e) {
-//            return new ResponseEntity<>(e.getMessage(),HttpStatus.INTERNAL_SERVER_ERROR);
-//        }
-
-
         //Without try catch Global Error Handler will execute
         CategoryDto categoryDto = categoryService.getCategoryById(id);
         if(ObjectUtils.isEmpty(categoryDto)){
-            return new ResponseEntity<>("Internal Server Error"+id,HttpStatus.NOT_FOUND);
+            return CommonUtil.createErrorResponseMessage("Internal Server Error",HttpStatus.NOT_FOUND);
+//            return new ResponseEntity<>("Internal Server Error"+id,HttpStatus.NOT_FOUND);
         }
-        return new ResponseEntity<>(categoryDto,HttpStatus.OK);
+        return CommonUtil.createBuildResponse(categoryDto,HttpStatus.OK);
+//        return new ResponseEntity<>(categoryDto,HttpStatus.OK);
 
     }
 
@@ -78,9 +71,11 @@ public class CategoryController {
     public ResponseEntity<?> deleteCategoryById(@PathVariable Integer id){
         Boolean deleted = categoryService.deleteCategoryById(id);
         if(deleted){
-            return new ResponseEntity<>("Category Deleted Successfully",HttpStatus.OK);
+            return CommonUtil.createBuildResponseMessage("Category Deleted Successfully",HttpStatus.OK);
+//            return new ResponseEntity<>("Category Deleted Successfully",HttpStatus.OK);
         }
-        return new ResponseEntity<>("Category not deleted",HttpStatus.INTERNAL_SERVER_ERROR);
+        return CommonUtil.createErrorResponseMessage("Category Not Deleted",HttpStatus.INTERNAL_SERVER_ERROR);
+//        return new ResponseEntity<>("Category not deleted",HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
 }
