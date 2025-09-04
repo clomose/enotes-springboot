@@ -6,6 +6,7 @@ import com.example.Enotes.entity.Category;
 import com.example.Enotes.exception.ResourceNotFoundException;
 import com.example.Enotes.repository.CategoryRepository;
 import com.example.Enotes.service.CategoryService;
+import com.example.Enotes.util.Validation;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,13 +25,13 @@ public class CategoryServiceImpl implements CategoryService {
     @Autowired
     private ModelMapper mapper;
 
+    @Autowired
+    private Validation validation;
+
     @Override
     public Boolean saveCategory(CategoryDto categoryDto) {
-
-//        Category category = new Category();
-//        category.setName(categoryDto.getName());
-//        category.setDescription(categoryDto.getDescription());
-//        category.setIsActive(categoryDto.getIsActive());
+        //Validation Checking
+        validation.categoryValidation(categoryDto);
 
         Category category = mapper.map(categoryDto,Category.class);
 
