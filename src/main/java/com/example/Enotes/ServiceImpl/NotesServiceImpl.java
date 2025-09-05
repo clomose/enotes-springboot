@@ -1,17 +1,29 @@
 package com.example.Enotes.ServiceImpl;
 
 import com.example.Enotes.dto.NotesDto;
+import com.example.Enotes.entity.FileDetails;
 import com.example.Enotes.entity.Notes;
 import com.example.Enotes.exception.ResourceNotFoundException;
 import com.example.Enotes.repository.CategoryRepository;
+import com.example.Enotes.repository.FileRepository;
 import com.example.Enotes.repository.NotesRepository;
 import com.example.Enotes.service.NotesService;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.io.FilenameUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class NotesServiceImpl implements NotesService {
@@ -23,20 +35,84 @@ public class NotesServiceImpl implements NotesService {
     private NotesRepository notesRepository;
 
     @Autowired
+    private FileRepository fileRepository;
+
+    @Autowired
     private ModelMapper mapper;
 
+    @Value("${file.upload.path}")
+    private String uploadPath;
+
     @Override
-    public Boolean saveNotes(NotesDto notesDto) throws Exception {
+    public Boolean saveNotes(String notes, MultipartFile file) throws Exception {
+
+        ObjectMapper obj = new ObjectMapper();
+        NotesDto notesDto = obj.readValue(notes,NotesDto.class);
 
         //category validation
         checkCategoryExist(notesDto.getCategory());
 
-        Notes notes = mapper.map(notesDto,Notes.class);
-        Notes saveNotes = notesRepository.save(notes);
+        Notes notesMap = mapper.map(notesDto,Notes.class);
+
+        FileDetails fileDetails = saveFileDetails(file);
+
+        if(!ObjectUtils.isEmpty(fileDetails)){
+            notesMap.setFile(fileDetails);
+        }else{
+            notesMap.setFile(null);
+        }
+
+        Notes saveNotes = notesRepository.save(notesMap);
         if(!ObjectUtils.isEmpty(saveNotes)){
             return true;
         }
         return false;
+    }
+
+    private FileDetails saveFileDetails(MultipartFile file) throws IOException {
+        if(!ObjectUtils.isEmpty(file) && !file.isEmpty()){
+
+            String originalFileName = file.getOriginalFilename();
+            String rndString = UUID.randomUUID().toString();
+            String extension = FilenameUtils.getExtension(originalFileName);
+            String uploadFileName = rndString+"."+extension;
+
+            File saveFile = new File(uploadPath);
+            if(!saveFile.exists()){
+                saveFile.mkdir();
+            }
+
+            // path : enotesapiservice/notes/java.pdf
+            String strorePath = uploadPath.concat(uploadFileName);
+
+            //upload file
+            long upload = Files.copy(file.getInputStream(), Paths.get(strorePath));
+            if(upload!=0){
+                FileDetails fileDetails = new FileDetails();
+                fileDetails.setOriginalFileName(originalFileName);
+                fileDetails.setDisplayFileName(getDisplayName(originalFileName));
+                fileDetails.setUploadFileName(uploadFileName);
+                fileDetails.setFileSize(file.getSize());
+                fileDetails.setPath(strorePath);
+                FileDetails savedFile = fileRepository.save(fileDetails);
+                return savedFile;
+            }
+        }
+        return null;
+    }
+
+    private String getDisplayName(String originalFileName) {
+        //filename.extension
+
+        String extension = FilenameUtils.getExtension(originalFileName); //get extension
+        String fileName = FilenameUtils.removeExtension(originalFileName);
+
+        if(fileName.length()>8){
+            fileName = fileName.substring(0,8);
+        }
+
+        fileName = fileName+"."+extension;
+        return fileName;
     }
 
     private void checkCategoryExist(NotesDto.CategoryDto category) throws Exception {
