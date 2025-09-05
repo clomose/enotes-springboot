@@ -15,7 +15,6 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@EntityListeners(AuditingEntityListener.class)
 public class Category extends BaseModel {
 
     @Id
