@@ -70,11 +70,11 @@ public class NotesServiceImpl implements NotesService {
     }
 
     private FileDetails saveFileDetails(MultipartFile file) throws IOException {
-        if(!ObjectUtils.isEmpty(file) && !file.isEmpty()){
+        if(file!=null && !file.isEmpty()){
 
             String originalFileName = file.getOriginalFilename();
             String rndString = UUID.randomUUID().toString();
-            String extension = FilenameUtils.getExtension(originalFileName);
+            String extension = FilenameUtils.getExtension(originalFileName); //dependency -> FilenameUtils
             String uploadFileName = rndString+"."+extension;
 
             File saveFile = new File(uploadPath);
@@ -105,7 +105,7 @@ public class NotesServiceImpl implements NotesService {
         //filename.extension
 
         String extension = FilenameUtils.getExtension(originalFileName); //get extension
-        String fileName = FilenameUtils.removeExtension(originalFileName);
+        String fileName = FilenameUtils.removeExtension(originalFileName); //get name without extension
 
         if(fileName.length()>8){
             fileName = fileName.substring(0,8);
