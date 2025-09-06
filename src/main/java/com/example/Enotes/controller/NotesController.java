@@ -1,10 +1,13 @@
 package com.example.Enotes.controller;
 
 import com.example.Enotes.dto.NotesDto;
+import com.example.Enotes.entity.FileDetails;
 import com.example.Enotes.service.NotesService;
 import com.example.Enotes.util.CommonUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
@@ -28,6 +31,20 @@ public class NotesController {
             return CommonUtil.createBuildResponseMessage("notes saved successfully", HttpStatus.CREATED);
         }
         return CommonUtil.createErrorResponseMessage("Notes Note saved",HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @GetMapping("/download/{id}")
+    public ResponseEntity<?> downloadFile(@PathVariable Integer id) throws Exception{
+
+        FileDetails fileDetails = notesService.getFileDetails(id);
+        byte[] data = notesService.downloadFile(fileDetails);
+
+        HttpHeaders headers = new HttpHeaders();
+        String contentType = CommonUtil.getContentType(fileDetails.getOriginalFileName());
+        headers.setContentType(MediaType.parseMediaType(contentType));
+        headers.setContentDispositionFormData("attachment",fileDetails.getOriginalFileName());
+
+        return ResponseEntity.ok().headers(headers).body(data);
     }
 
     @GetMapping("/")
