@@ -1,6 +1,7 @@
 package com.example.Enotes.controller;
 
 import com.example.Enotes.dto.NotesDto;
+import com.example.Enotes.dto.NotesResponse;
 import com.example.Enotes.entity.FileDetails;
 import com.example.Enotes.service.NotesService;
 import com.example.Enotes.util.CommonUtil;
@@ -48,9 +49,22 @@ public class NotesController {
     }
 
     @GetMapping("/")
-    public ResponseEntity<?> getAllNotes(@RequestBody NotesDto notesDto){
+    public ResponseEntity<?> getAllNotes(){
         List<NotesDto> notes  = notesService.getAllNotes();
         if(CollectionUtils.isEmpty(notes)){
+            return ResponseEntity.noContent().build();
+        }
+        return CommonUtil.createBuildResponse(notes,HttpStatus.OK);
+    }
+
+    @GetMapping("/user-notes")
+    public ResponseEntity<?> getAllNotesByUSer(
+            @RequestParam(name = "pageNo",defaultValue = "0") Integer pageNo,
+            @RequestParam(name = "pageSize",defaultValue = "2") Integer pageSize
+    ){
+        Integer userId = 2;
+        NotesResponse notes  = notesService.getAllNotesByUser(userId,pageNo,pageSize);
+        if(ObjectUtils.isEmpty(notes)){
             return ResponseEntity.noContent().build();
         }
         return CommonUtil.createBuildResponse(notes,HttpStatus.OK);
