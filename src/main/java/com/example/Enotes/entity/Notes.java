@@ -21,10 +21,10 @@ public class Notes extends BaseModel {
 
     private String description;
 
-    @ManyToOne
+    @ManyToOne  //due to this category becomes category_id and check it in database
     private Category category;
 
-    @ManyToOne
+    @ManyToOne  //due to this file becomes file_id and check it in database
     private FileDetails file;
 
 //    private Integer userId;

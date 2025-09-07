@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StreamUtils;
@@ -56,6 +57,11 @@ public class NotesServiceImpl implements NotesService {
         ObjectMapper obj = new ObjectMapper();
         NotesDto notesDto = obj.readValue(notes,NotesDto.class);
 
+        //update notes if id is given in request
+        if(!ObjectUtils.isEmpty(notesDto.getId())){
+            updateNotes(notesDto,file);
+        }
+
         //category validation
         checkCategoryExist(notesDto.getCategory());
 
@@ -66,7 +72,9 @@ public class NotesServiceImpl implements NotesService {
         if(!ObjectUtils.isEmpty(fileDetails)){
             notesMap.setFile(fileDetails);
         }else{
-            notesMap.setFile(null);
+            if(ObjectUtils.isEmpty(notesDto.getId())){
+                notesMap.setFile(null); //When id is also not present then make file as empty
+            }
         }
 
         Notes saveNotes = notesRepository.save(notesMap);
@@ -74,6 +82,17 @@ public class NotesServiceImpl implements NotesService {
             return true;
         }
         return false;
+    }
+
+    private void updateNotes(NotesDto notesDto, MultipartFile file) throws Exception {
+        Notes existsNotes = notesRepository.findById(notesDto.getId()).orElseThrow(() ->
+                new ResourceNotFoundException("Invalid notes id"));
+
+        if(ObjectUtils.isEmpty(file)){
+            notesDto.setFileDetails(mapper.map(existsNotes.getFile(), NotesDto.FileDto.class));
+            // If file is empty, set the previous file
+        }
+
     }
 
     private FileDetails saveFileDetails(MultipartFile file) throws IOException {
