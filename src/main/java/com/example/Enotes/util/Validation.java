@@ -1,6 +1,9 @@
 package com.example.Enotes.util;
 
 import com.example.Enotes.dto.CategoryDto;
+import com.example.Enotes.dto.TodoDto;
+import com.example.Enotes.enums.TodoStatus;
+import com.example.Enotes.exception.ResourceNotFoundException;
 import com.example.Enotes.exception.ValidationException;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
@@ -53,6 +56,19 @@ public class Validation {
         }
         if (!error.isEmpty()){
             throw new ValidationException(error);
+        }
+    }
+
+    public void todoValidation(TodoDto todoDto) throws Exception{
+        TodoDto.StatusDto reqStatus = todoDto.getStatus();
+        Boolean statusFound = false;
+        for (TodoStatus st : TodoStatus.values()) {
+            if(st.getId().equals(reqStatus.getId())){
+                statusFound=true;
+            }
+        }
+        if(!statusFound){
+            throw new ResourceNotFoundException("invalid status");
         }
     }
 }
