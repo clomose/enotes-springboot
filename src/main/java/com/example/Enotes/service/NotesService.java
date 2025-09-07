@@ -18,4 +18,14 @@ public interface NotesService {
     public FileDetails getFileDetails(Integer id) throws Exception;
 
     public NotesResponse getAllNotesByUser(Integer userId,Integer pageNo,Integer pageSize);
+
+    void softDeleteNotes(Integer id) throws Exception;
+
+    void restoreNotes(Integer id) throws Exception;
+
+    List<NotesDto> getUserRecycleBinNotes(Integer useId);
+
+    void hardDeleteNotes(Integer id) throws Exception;
+
+    void emptyRecycleBin(Integer userId) throws Exception;
 }

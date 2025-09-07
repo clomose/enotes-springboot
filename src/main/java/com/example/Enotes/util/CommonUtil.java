@@ -12,7 +12,7 @@ public class CommonUtil {
         GenericResponse  response = GenericResponse.builder()
                 .responseStatus(status)
                 .status("success")
-                .message("message")
+                .message("success")
                 .data(data)
                 .build();
         return response.create();
