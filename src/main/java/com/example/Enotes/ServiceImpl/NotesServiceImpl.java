@@ -99,9 +99,9 @@ public class NotesServiceImpl implements NotesService {
         Notes existsNotes = notesRepository.findById(notesDto.getId()).orElseThrow(() ->
                 new ResourceNotFoundException("Invalid notes id"));
 
-        if(ObjectUtils.isEmpty(file)){
+        if(ObjectUtils.isEmpty(file) && !ObjectUtils.isEmpty(existsNotes.getFile())){
             notesDto.setFileDetails(mapper.map(existsNotes.getFile(), NotesDto.FileDto.class));
-            // If file is empty, set the previous file
+            // If file is empty and the previous file is not empty, set the previous file
         }
 
     }

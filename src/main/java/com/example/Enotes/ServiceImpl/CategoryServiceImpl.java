@@ -51,7 +51,7 @@ public class CategoryServiceImpl implements CategoryService {
         }
         return true;
     }
-    
+
     @Override
     public List<CategoryDto> getAllCategory() {
         List<Category> categories = categoryRepository.findByIsDeletedFalse();
