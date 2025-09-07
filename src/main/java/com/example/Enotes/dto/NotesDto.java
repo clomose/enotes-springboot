@@ -32,6 +32,10 @@ public class NotesDto {
 
     private Date updatedOn;
 
+    private Date deletedOn;
+
+    private Boolean isDeleted;
+
     private FileDto fileDetails;
 
     @Getter

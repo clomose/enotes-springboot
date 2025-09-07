@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.Date;
+
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
@@ -26,6 +28,10 @@ public class Notes extends BaseModel {
 
     @ManyToOne  //due to this file becomes file_id and check it in database
     private FileDetails file;
+
+    private Boolean isDeleted;
+
+    private Date deletedOn;
 
 //    private Integer userId;
 }
