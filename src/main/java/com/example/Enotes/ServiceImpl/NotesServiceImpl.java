@@ -19,6 +19,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StreamUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -30,6 +31,8 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -193,7 +196,7 @@ public class NotesServiceImpl implements NotesService {
         Notes notes = notesRepository.findById(id).orElseThrow(() ->
                 new ResourceNotFoundException("Notes id invalid or not found"));
         notes.setIsDeleted(true);
-        notes.setDeletedOn(new Date());
+        notes.setDeletedOn(LocalDateTime.now());
         notesRepository.save(notes);
     }
 
@@ -212,4 +215,26 @@ public class NotesServiceImpl implements NotesService {
         List<NotesDto> notesDtosList = recycleNotes.stream().map((notes) -> mapper.map(notes,NotesDto.class)).toList();
         return notesDtosList;
     }
+
+    @Override
+    public void hardDeleteNotes(Integer id) throws Exception {
+        Notes notes = notesRepository.findById(id).orElseThrow(() ->
+                new ResourceNotFoundException("Notes id invalid or not found"));
+        if(notes.getIsDeleted()){
+            notesRepository.delete(notes);
+        }else {
+            throw new IllegalArgumentException("Sorry You can't hard delete directly");
+        }
+    }
+
+    @Override
+    public void emptyRecycleBin(Integer userId) throws Exception {
+        List<Notes> recycleNotes = notesRepository.findByCreatedByAndIsDeletedTrue(userId);
+
+        if (!CollectionUtils.isEmpty(recycleNotes)){
+            notesRepository.deleteAll(recycleNotes);
+        }
+    }
+
+
 }
