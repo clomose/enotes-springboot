@@ -35,21 +35,15 @@ public class CategoryServiceImpl implements CategoryService {
         validation.categoryValidation(categoryDto);
 
         //check category exist or not
-        Boolean check = categoryRepository.existsByName(categoryDto.getName().trim());
-        if(check){
-            //throw exception
-            throw new ResourceAlreadyExists("Category Already exists");
+        if(ObjectUtils.isEmpty(categoryDto.getId())){
+            Boolean check = categoryRepository.existsByName(categoryDto.getName().trim());
+            if(check){
+                //throw exception
+                throw new ResourceAlreadyExists("Category Already exists");
+            }
         }
-
         Category category = mapper.map(categoryDto,Category.class);
-
-        if(ObjectUtils.isEmpty(category.getId())) {
-            category.setIsDeleted(false);
-//            category.setCreatedBy(1);
-        }else{
-            updateCategory(category);
-        }
-
+        category.setIsDeleted(false);
         Category saveCategory = categoryRepository.save(category);
 
         if(ObjectUtils.isEmpty(saveCategory)){
@@ -57,19 +51,7 @@ public class CategoryServiceImpl implements CategoryService {
         }
         return true;
     }
-
-    private void updateCategory(Category category) {
-        Optional<Category> findById = categoryRepository.findById(category.getId());
-        if(findById.isPresent()){
-            Category existCategory = findById.get();
-            category.setCreatedBy(existCategory.getId());
-            category.setIsDeleted(existCategory.getIsDeleted());
-            category.setCreatedOn(existCategory.getCreatedOn());
-//            category.setUpdatedBy(1);
-//            category.setUpdatedOn(new Date());
-        }
-    }
-
+    
     @Override
     public List<CategoryDto> getAllCategory() {
         List<Category> categories = categoryRepository.findByIsDeletedFalse();
