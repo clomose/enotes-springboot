@@ -1,11 +1,15 @@
 package com.example.Enotes.ServiceImpl;
 
+import com.example.Enotes.dto.FavouriteNoteDto;
 import com.example.Enotes.dto.NotesDto;
 import com.example.Enotes.dto.NotesResponse;
+import com.example.Enotes.entity.FavouriteNote;
 import com.example.Enotes.entity.FileDetails;
 import com.example.Enotes.entity.Notes;
+import com.example.Enotes.exception.ResourceAlreadyExists;
 import com.example.Enotes.exception.ResourceNotFoundException;
 import com.example.Enotes.repository.CategoryRepository;
+import com.example.Enotes.repository.FavouriteNoteRepository;
 import com.example.Enotes.repository.FileRepository;
 import com.example.Enotes.repository.NotesRepository;
 import com.example.Enotes.service.NotesService;
@@ -48,6 +52,9 @@ public class NotesServiceImpl implements NotesService {
 
     @Autowired
     private FileRepository fileRepository;
+
+    @Autowired
+    private FavouriteNoteRepository favouriteNoteRepository;
 
     @Autowired
     private ModelMapper mapper;
@@ -234,6 +241,32 @@ public class NotesServiceImpl implements NotesService {
         if (!CollectionUtils.isEmpty(recycleNotes)){
             notesRepository.deleteAll(recycleNotes);
         }
+    }
+
+    @Override
+    public void favouriteNotes(Integer noteId) throws Exception{
+        int userId = 2;
+        Notes notes = notesRepository.findById(noteId).orElseThrow(() ->
+                new ResourceNotFoundException("Invalid notes id && not not found"));
+        FavouriteNote favouriteNote = FavouriteNote.builder()
+                .note(notes)
+                .userId(userId)
+                .build();
+        favouriteNoteRepository.save(favouriteNote);
+    }
+
+    @Override
+    public void unFavouriteNotes(Integer favNoteId) throws Exception {
+        FavouriteNote favouriteNote = favouriteNoteRepository.findById(favNoteId).orElseThrow(() ->
+                new ResourceNotFoundException("Invalid Favourite notes id && note not found"));
+        favouriteNoteRepository.delete(favouriteNote);
+    }
+
+    @Override
+    public List<FavouriteNoteDto> getUserFavouriteNotes() throws Exception{
+        int userId = 2;
+        List<FavouriteNote> favouriteNotes = favouriteNoteRepository.findByUserId(userId);
+        return favouriteNotes.stream().map(fn -> mapper.map(fn, FavouriteNoteDto.class)).toList();
     }
 
 

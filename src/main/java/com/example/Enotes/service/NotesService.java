@@ -1,5 +1,6 @@
 package com.example.Enotes.service;
 
+import com.example.Enotes.dto.FavouriteNoteDto;
 import com.example.Enotes.dto.NotesDto;
 import com.example.Enotes.dto.NotesResponse;
 import com.example.Enotes.entity.FileDetails;
@@ -19,13 +20,19 @@ public interface NotesService {
 
     public NotesResponse getAllNotesByUser(Integer userId,Integer pageNo,Integer pageSize);
 
-    void softDeleteNotes(Integer id) throws Exception;
+    public void softDeleteNotes(Integer id) throws Exception;
 
-    void restoreNotes(Integer id) throws Exception;
+    public void restoreNotes(Integer id) throws Exception;
 
-    List<NotesDto> getUserRecycleBinNotes(Integer useId);
+    public List<NotesDto> getUserRecycleBinNotes(Integer useId);
 
-    void hardDeleteNotes(Integer id) throws Exception;
+    public void hardDeleteNotes(Integer id) throws Exception;
 
-    void emptyRecycleBin(Integer userId) throws Exception;
+    public void emptyRecycleBin(Integer userId) throws Exception;
+
+    public void favouriteNotes(Integer noteId) throws Exception;
+
+    public void unFavouriteNotes(Integer noteId) throws Exception;
+
+    public List<FavouriteNoteDto> getUserFavouriteNotes() throws Exception;
 }
