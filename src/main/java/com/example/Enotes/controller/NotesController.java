@@ -1,5 +1,6 @@
 package com.example.Enotes.controller;
 
+import com.example.Enotes.dto.FavouriteNoteDto;
 import com.example.Enotes.dto.NotesDto;
 import com.example.Enotes.dto.NotesResponse;
 import com.example.Enotes.entity.FileDetails;
@@ -103,5 +104,26 @@ public class NotesController {
         Integer userId=2;
         notesService.emptyRecycleBin(userId);
         return CommonUtil.createBuildResponseMessage("Deleted Successfully",HttpStatus.OK);
+    }
+
+    @GetMapping("/fav/{noteId}")
+    public ResponseEntity<?> favouriteNote(@PathVariable Integer noteId) throws Exception{
+        notesService.favouriteNotes(noteId);
+        return CommonUtil.createBuildResponseMessage("Notes Added Favourite",HttpStatus.CREATED);
+    }
+
+    @DeleteMapping("/un-fav/{favNotId}")
+    public ResponseEntity<?> unFavouriteNote(@PathVariable Integer favNotId) throws Exception{
+        notesService.unFavouriteNotes(favNotId);
+        return CommonUtil.createBuildResponseMessage("Remove Favourite",HttpStatus.OK);
+    }
+
+    @GetMapping("/fav-note")
+    public ResponseEntity<?> getUserFavouriteNote() throws Exception{
+        List<FavouriteNoteDto> notes = notesService.getUserFavouriteNotes();
+        if(CollectionUtils.isEmpty(notes)){
+            return ResponseEntity.noContent().build();
+        }
+        return CommonUtil.createBuildResponse(notes,HttpStatus.OK);
     }
 }
