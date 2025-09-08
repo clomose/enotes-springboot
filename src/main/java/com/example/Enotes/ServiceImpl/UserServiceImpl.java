@@ -1,5 +1,6 @@
 package com.example.Enotes.ServiceImpl;
 
+import com.example.Enotes.dto.EmailRequest;
 import com.example.Enotes.dto.UserDto;
 import com.example.Enotes.entity.Role;
 import com.example.Enotes.entity.User;
@@ -29,6 +30,9 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private ModelMapper mapper;
 
+    @Autowired
+    private EmailService emailService;
+
     @Override
     public Boolean register(UserDto userDto) throws Exception{
         validation.userValidation(userDto);
@@ -38,10 +42,28 @@ public class UserServiceImpl implements UserService {
         //very important concept
         //We did it because we need actual role objects from the database
         User save = userRepository.save(user);
-        if(ObjectUtils.isEmpty(save)){
-            return false;
+        if(!ObjectUtils.isEmpty(save)){
+            //mail
+            emailSend(save);
+            return true;
         }
-        return true;
+        return false;
+    }
+
+    private void emailSend(User save) throws Exception {
+        String message= "Hi,<b>"+save.getFirstName()
+                +"</b> <br> Your account register successfully <br>"
+                +"<br> Click the below link and verify your account <br>"
+                +"<a href='#'>Click Here</a> <br><br>"
+                +"Thanks,<br> Notes.com";
+        EmailRequest emailRequest = EmailRequest.builder()
+                .to(save.getEmail())
+                .title("Account Creating Confirmation")
+                .subject("Account Created Success")
+                .message(message)
+                .build();
+
+        emailService.sendEmail(emailRequest);
     }
 
     private void setRole(UserDto userDto, User user) {
