@@ -30,11 +30,15 @@ public class User {
 
     private String password;
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @ManyToMany(cascade = CascadeType.ALL) //Hibernate maps the primary keys of both
     @JoinTable(
             name = "user_role",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
     private List<Role> roles;
+
+    @OneToOne(cascade = CascadeType.ALL,fetch = FetchType.EAGER) //Hibernate maps the primary keys of AccountStatus
+    @JoinColumn(name = "status_id")
+    private AccountStatus status;
 }
