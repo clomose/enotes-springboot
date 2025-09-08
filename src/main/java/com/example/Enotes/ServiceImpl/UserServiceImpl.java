@@ -2,6 +2,7 @@ package com.example.Enotes.ServiceImpl;
 
 import com.example.Enotes.dto.EmailRequest;
 import com.example.Enotes.dto.UserDto;
+import com.example.Enotes.entity.AccountStatus;
 import com.example.Enotes.entity.Role;
 import com.example.Enotes.entity.User;
 import com.example.Enotes.repository.RoleRepository;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -34,28 +36,36 @@ public class UserServiceImpl implements UserService {
     private EmailService emailService;
 
     @Override
-    public Boolean register(UserDto userDto) throws Exception{
+    public Boolean register(UserDto userDto,String url) throws Exception{
         validation.userValidation(userDto);
 
         User user = mapper.map(userDto,User.class);
         setRole(userDto,user);
         //very important concept
         //We did it because we need actual role objects from the database
+
+        AccountStatus status = AccountStatus.builder()
+                .isActive(false)
+                .verificationCode(UUID.randomUUID().toString())
+                .build();
+        user.setStatus(status);
         User save = userRepository.save(user);
         if(!ObjectUtils.isEmpty(save)){
             //mail
-            emailSend(save);
+            emailSend(save,url);
             return true;
         }
         return false;
     }
 
-    private void emailSend(User save) throws Exception {
-        String message= "Hi,<b>"+save.getFirstName()
-                +"</b> <br> Your account register successfully <br>"
+    private void emailSend(User save,String url) throws Exception {
+        String message="Hi,</b>[[username]]<br> Your account register successfully <br>"
                 +"<br> Click the below link and verify your account <br>"
-                +"<a href='#'>Click Here</a> <br><br>"
+                +"<a href='[[url]]'>Click Here</a> <br><br>"
                 +"Thanks,<br> Notes.com";
+
+        message = message.replace("[[username]]",save.getFirstName());
+        message = message.replace("[[url]]",url + "/api/v1/home/verify?uid="+save.getId()+"&&code="+save.getStatus().getVerificationCode());
         EmailRequest emailRequest = EmailRequest.builder()
                 .to(save.getEmail())
                 .title("Account Creating Confirmation")
