@@ -35,7 +35,7 @@ public class CategoryServiceImpl implements CategoryService {
         validation.categoryValidation(categoryDto);
 
         //check category exist or not
-        if(ObjectUtils.isEmpty(categoryDto.getId())){
+        if(!ObjectUtils.isEmpty(categoryDto.getId())){
             Boolean check = categoryRepository.existsByName(categoryDto.getName().trim());
             if(check){
                 //throw exception

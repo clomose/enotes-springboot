@@ -65,7 +65,10 @@ public class TodoServiceImpl implements TodoService {
     public List<TodoDto> getTodoByUser() {
         Integer userId = 2;
         List<Todo> todos = todoRepository.findByCreatedBy(userId);
-        return todos.stream().map((td) -> mapper.map(td,TodoDto.class)).toList();
-
+        List<TodoDto> todoDtos = todos.stream().map((td) -> mapper.map(td,TodoDto.class)).toList();
+        for(int i=0;i<todoDtos.size();i++){
+            setStatus(todoDtos.get(i),todos.get(i));
+        }
+        return todoDtos;
     }
 }

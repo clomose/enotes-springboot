@@ -3,6 +3,7 @@ package com.example.Enotes.ServiceImpl;
 import com.example.Enotes.entity.AccountStatus;
 import com.example.Enotes.entity.User;
 import com.example.Enotes.exception.ResourceNotFoundException;
+import com.example.Enotes.exception.SuccessException;
 import com.example.Enotes.repository.UserRepository;
 import com.example.Enotes.service.HomeService;
 import org.springframework.beans.factory.annotation.Autowired;
