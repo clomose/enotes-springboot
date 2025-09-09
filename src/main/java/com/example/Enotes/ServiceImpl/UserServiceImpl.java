@@ -10,6 +10,7 @@ import com.example.Enotes.entity.User;
 import com.example.Enotes.handler.LoginResponse;
 import com.example.Enotes.repository.RoleRepository;
 import com.example.Enotes.repository.UserRepository;
+import com.example.Enotes.service.JwtService;
 import com.example.Enotes.service.UserService;
 import com.example.Enotes.util.Validation;
 import org.modelmapper.ModelMapper;
@@ -48,6 +49,9 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private AuthenticationManager authenticationManager;
 
+    @Autowired
+    private JwtService jwtService;
+
     @Override
     public Boolean register(UserDto userDto,String url) throws Exception{
         validation.userValidation(userDto);
@@ -78,7 +82,7 @@ public class UserServiceImpl implements UserService {
                 new UsernamePasswordAuthenticationToken(loginRequest.getEmail(),loginRequest.getPassword()));
         if (authentication.isAuthenticated()){
             CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
-            String token = "ugdgigvsegfwc";
+            String token = jwtService.generateToken(customUserDetails.getUser());
             LoginResponse loginResponse = LoginResponse.builder()
                     .token(token)
                     .user(mapper.map(customUserDetails.getUser(), UserDto.class))
