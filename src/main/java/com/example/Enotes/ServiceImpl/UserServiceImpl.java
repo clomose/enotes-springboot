@@ -1,16 +1,23 @@
 package com.example.Enotes.ServiceImpl;
 
+import com.example.Enotes.config.security.CustomUserDetails;
 import com.example.Enotes.dto.EmailRequest;
+import com.example.Enotes.dto.LoginRequest;
 import com.example.Enotes.dto.UserDto;
 import com.example.Enotes.entity.AccountStatus;
 import com.example.Enotes.entity.Role;
 import com.example.Enotes.entity.User;
+import com.example.Enotes.handler.LoginResponse;
 import com.example.Enotes.repository.RoleRepository;
 import com.example.Enotes.repository.UserRepository;
 import com.example.Enotes.service.UserService;
 import com.example.Enotes.util.Validation;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
@@ -35,6 +42,12 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private EmailService emailService;
 
+    @Autowired
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
+
+    @Autowired
+    private AuthenticationManager authenticationManager;
+
     @Override
     public Boolean register(UserDto userDto,String url) throws Exception{
         validation.userValidation(userDto);
@@ -49,6 +62,7 @@ public class UserServiceImpl implements UserService {
                 .verificationCode(UUID.randomUUID().toString())
                 .build();
         user.setStatus(status);
+        user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         User save = userRepository.save(user);
         if(!ObjectUtils.isEmpty(save)){
             //mail
@@ -56,6 +70,22 @@ public class UserServiceImpl implements UserService {
             return true;
         }
         return false;
+    }
+
+    @Override
+    public LoginResponse login(LoginRequest loginRequest) {
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(loginRequest.getEmail(),loginRequest.getPassword()));
+        if (authentication.isAuthenticated()){
+            CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
+            String token = "ugdgigvsegfwc";
+            LoginResponse loginResponse = LoginResponse.builder()
+                    .token(token)
+                    .user(mapper.map(customUserDetails.getUser(), UserDto.class))
+                    .build();
+            return loginResponse;
+        }
+        return null;
     }
 
     private void emailSend(User save,String url) throws Exception {

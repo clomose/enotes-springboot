@@ -14,7 +14,6 @@ import java.util.List;
 @AllArgsConstructor
 @Entity
 @Table(name = "users")
-
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,7 +29,7 @@ public class User {
 
     private String password;
 
-    @ManyToMany(cascade = CascadeType.ALL) //Hibernate maps the primary keys of both
+    @ManyToMany(cascade = CascadeType.ALL,fetch = FetchType.EAGER) //Hibernate maps the primary keys of both
     @JoinTable(
             name = "user_role",
             joinColumns = @JoinColumn(name = "user_id"),
