@@ -3,7 +3,7 @@ package com.example.Enotes.ServiceImpl;
 import com.example.Enotes.config.security.CustomUserDetails;
 import com.example.Enotes.dto.EmailRequest;
 import com.example.Enotes.dto.LoginRequest;
-import com.example.Enotes.dto.UserDto;
+import com.example.Enotes.dto.UserRequest;
 import com.example.Enotes.entity.AccountStatus;
 import com.example.Enotes.entity.Role;
 import com.example.Enotes.entity.User;
@@ -53,7 +53,7 @@ public class UserServiceImpl implements UserService {
     private JwtService jwtService;
 
     @Override
-    public Boolean register(UserDto userDto,String url) throws Exception{
+    public Boolean register(UserRequest userDto, String url) throws Exception{
         validation.userValidation(userDto);
 
         User user = mapper.map(userDto,User.class);
@@ -85,7 +85,7 @@ public class UserServiceImpl implements UserService {
             String token = jwtService.generateToken(customUserDetails.getUser());
             LoginResponse loginResponse = LoginResponse.builder()
                     .token(token)
-                    .user(mapper.map(customUserDetails.getUser(), UserDto.class))
+                    .user(mapper.map(customUserDetails.getUser(), UserRequest.class))
                     .build();
             return loginResponse;
         }
@@ -110,7 +110,7 @@ public class UserServiceImpl implements UserService {
         emailService.sendEmail(emailRequest);
     }
 
-    private void setRole(UserDto userDto, User user) {
+    private void setRole(UserRequest userDto, User user) {
         List<Integer> roleId = userDto.getRoles().stream().map(r -> r.getId()).toList();
         List<Role> roles = roleRepository.findAllById(roleId);
         user.setRoles(roles);
