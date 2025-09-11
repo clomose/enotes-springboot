@@ -9,6 +9,7 @@ import com.example.Enotes.util.CommonUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
@@ -24,6 +25,7 @@ public class CategoryController {
     private CategoryService categoryService;
 
     @PostMapping("/save")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> saveCategory(@RequestBody CategoryDto categoryDto){
         Boolean saveCategory = categoryService.saveCategory(categoryDto);
         if(saveCategory){
@@ -35,6 +37,7 @@ public class CategoryController {
     }
 
     @GetMapping("/")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> getAllCategory(){
         List<CategoryDto> categoriesDto = categoryService.getAllCategory();
         if(CollectionUtils.isEmpty(categoriesDto)){
@@ -45,6 +48,7 @@ public class CategoryController {
     }
 
     @GetMapping("/active")
+    @PreAuthorize("hasAnyRole('USER','ADMIN')")
     public ResponseEntity<?> getActiveCategory(){
         List<CategoryResponse> categoriesDto = categoryService.getActiveCategory();
         if(CollectionUtils.isEmpty(categoriesDto)){
@@ -55,6 +59,7 @@ public class CategoryController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> getCategoryDetailsById(@PathVariable Integer id) throws Exception{
         //Without try catch Global Error Handler will execute
         CategoryDto categoryDto = categoryService.getCategoryById(id);
@@ -68,6 +73,7 @@ public class CategoryController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> deleteCategoryById(@PathVariable Integer id){
         Boolean deleted = categoryService.deleteCategoryById(id);
         if(deleted){
