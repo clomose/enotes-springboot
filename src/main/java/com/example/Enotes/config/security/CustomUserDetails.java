@@ -23,7 +23,8 @@ public class CustomUserDetails implements UserDetails {
 //        Returns roles/permissions granted to the user.
 
         List<SimpleGrantedAuthority> autority = new ArrayList<>();
-        user.getRoles().forEach(c -> autority.add(new SimpleGrantedAuthority(c.getName())));
+        user.getRoles().forEach(c -> autority.add(
+                new SimpleGrantedAuthority("ROLE_"+c.getName())));  // ROLE_ADMIN
         return autority;
     }
 

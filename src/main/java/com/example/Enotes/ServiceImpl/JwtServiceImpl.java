@@ -1,8 +1,12 @@
 package com.example.Enotes.ServiceImpl;
 
 import com.example.Enotes.entity.User;
+import com.example.Enotes.exception.JwtAuthException;
+import com.example.Enotes.exception.JwtTokenExpireException;
 import com.example.Enotes.service.JwtService;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -11,7 +15,6 @@ import org.springframework.stereotype.Service;
 
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
-import java.security.Key;
 import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
@@ -61,12 +64,22 @@ public class JwtServiceImpl implements JwtService {
     }
 
     private Claims extractAllClaims(String token) {
-        Claims claims = Jwts.parser().
-                verifyWith(getKey()).
-                build().
-                parseSignedClaims(token)
-                .getPayload();
-        return claims;
+        try{
+            return Jwts.parser().
+                    verifyWith(getKey()).
+                    build().
+                    parseSignedClaims(token)
+                    .getPayload();
+        }
+        catch (ExpiredJwtException e){
+            throw new JwtTokenExpireException("Token is Expired");
+        }
+        catch (JwtException e){
+            throw new JwtAuthException("Invalid Jwt token");
+        }
+        catch (Exception e){
+            throw e;
+        }
     }
 
 //    private SecretKey decrypt(String secretKey){
