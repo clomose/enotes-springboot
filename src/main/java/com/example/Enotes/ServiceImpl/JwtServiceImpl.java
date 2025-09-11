@@ -2,9 +2,11 @@ package com.example.Enotes.ServiceImpl;
 
 import com.example.Enotes.entity.User;
 import com.example.Enotes.service.JwtService;
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.KeyGenerator;
@@ -40,14 +42,55 @@ public class JwtServiceImpl implements JwtService {
                 .claims().add(claims) //information that is to be stored
                 .subject(user.getEmail()) //name of the field name
                 .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis()+60*60*10))
+                .expiration(new Date(System.currentTimeMillis()+1000*60*60*10))
                 .and()
                 .signWith(getKey())
                 .compact();
         return token;
     }
 
-    private Key getKey(){
+    @Override
+    public String extractEmail(String token) {
+        Claims claims = extractAllClaims(token);
+        return claims.getSubject();
+    }
+
+    public String role(String token){
+        Claims claims = extractAllClaims(token);
+        return (String) claims.get("role");
+    }
+
+    private Claims extractAllClaims(String token) {
+        Claims claims = Jwts.parser().
+                verifyWith(getKey()).
+                build().
+                parseSignedClaims(token)
+                .getPayload();
+        return claims;
+    }
+
+//    private SecretKey decrypt(String secretKey){
+//        byte[] keyBytes =  Decoders.BASE64.decode(secretKey);
+//        return Keys.hmacShaKeyFor(keyBytes);
+//    }
+
+    @Override
+    public Boolean validateToken(String token, UserDetails userDetails) {
+        String email = extractEmail(token);
+        Boolean isExpired = isTokenExpired(token);
+        if (email.equalsIgnoreCase(userDetails.getUsername()) && !isExpired){
+            return true;
+        }
+        return false;
+    }
+
+    private Boolean isTokenExpired(String token) {
+        Claims claims = extractAllClaims(token);
+        Date expiredDate = claims.getExpiration();
+        return expiredDate.before(new Date());
+    }
+
+    private SecretKey getKey(){
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
         return Keys.hmacShaKeyFor(keyBytes);
     }
