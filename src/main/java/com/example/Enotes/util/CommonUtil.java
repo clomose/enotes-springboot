@@ -1,11 +1,15 @@
 package com.example.Enotes.util;
 
+import com.example.Enotes.config.security.CustomUserDetails;
+import com.example.Enotes.dto.UserResponse;
+import com.example.Enotes.entity.User;
 import com.example.Enotes.handler.GenericResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 public class CommonUtil {
 
@@ -70,5 +74,18 @@ public class CommonUtil {
         String url = request.getServletPath(); // /api/v1/auth
         apiUrl = apiUrl.replace(url,"");
         return apiUrl;
+    }
+
+    //made it a static method
+    public static User getLoggedInUser(){
+        try {
+            CustomUserDetails logUser = (CustomUserDetails) SecurityContextHolder.getContext()
+                    .getAuthentication()
+                    .getPrincipal();
+            return logUser.getUser();
+        } catch (Exception e) {
+            throw e;
+        }
+
     }
 }

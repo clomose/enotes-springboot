@@ -2,8 +2,7 @@ package com.example.Enotes.util;
 
 import com.example.Enotes.dto.CategoryDto;
 import com.example.Enotes.dto.TodoDto;
-import com.example.Enotes.dto.UserDto;
-import com.example.Enotes.entity.Role;
+import com.example.Enotes.dto.UserRequest;
 import com.example.Enotes.enums.TodoStatus;
 import com.example.Enotes.exception.ResourceAlreadyExists;
 import com.example.Enotes.exception.ResourceNotFoundException;
@@ -87,7 +86,7 @@ public class Validation {
         }
     }
 
-    public void userValidation(UserDto userDto) throws Exception{
+    public void userValidation(UserRequest userDto) throws Exception{
         if (!StringUtils.hasText(userDto.getFirstName())){
             throw new IllegalArgumentException("First name is invalid");
         }

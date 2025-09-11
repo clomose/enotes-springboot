@@ -4,13 +4,7 @@ import lombok.*;
 
 import java.util.List;
 
-@Getter
-@Setter
-@AllArgsConstructor
-@NoArgsConstructor
-@Builder
-public class UserDto {
-
+public class UserResponse {
     private Integer id;
 
     private String firstName;
@@ -21,7 +15,7 @@ public class UserDto {
 
     private String mobNo;
 
-    private String password;
+    private StatusDto status;
 
     private List<RoleDto> roles;
 
@@ -33,5 +27,15 @@ public class UserDto {
     public static class RoleDto{
         private int id;
         private String name;
+    }
+
+    @Getter
+    @Setter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Builder
+    public static class StatusDto{
+        private int id;
+        private Boolean isActive;
     }
 }

@@ -1,7 +1,7 @@
 package com.example.Enotes.controller;
 
 import com.example.Enotes.dto.LoginRequest;
-import com.example.Enotes.dto.UserDto;
+import com.example.Enotes.dto.UserRequest;
 import com.example.Enotes.handler.LoginResponse;
 import com.example.Enotes.service.UserService;
 import com.example.Enotes.util.CommonUtil;
@@ -20,7 +20,7 @@ public class AuthController {
     private UserService userService;
 
     @PostMapping("/")
-    public ResponseEntity<?>  registerUser(@RequestBody UserDto userDto, HttpServletRequest request) throws Exception
+    public ResponseEntity<?>  registerUser(@RequestBody UserRequest userDto, HttpServletRequest request) throws Exception
     {
         String url = CommonUtil.getUrl(request);
         Boolean register = userService.register(userDto,url);
