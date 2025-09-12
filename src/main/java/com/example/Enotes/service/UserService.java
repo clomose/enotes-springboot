@@ -1,11 +1,7 @@
 package com.example.Enotes.service;
 
-import com.example.Enotes.dto.LoginRequest;
-import com.example.Enotes.dto.UserRequest;
-import com.example.Enotes.handler.LoginResponse;
+import com.example.Enotes.dto.PasswordChangeRequest;
 
 public interface UserService {
-    public Boolean register(UserRequest userDto, String url) throws Exception;
-
-    LoginResponse login(LoginRequest loginRequest);
+     public void changePassword(PasswordChangeRequest passwordChangeRequest);
 }
