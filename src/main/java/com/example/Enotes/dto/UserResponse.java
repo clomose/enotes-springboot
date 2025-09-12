@@ -3,7 +3,11 @@ package com.example.Enotes.dto;
 import lombok.*;
 
 import java.util.List;
-
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class UserResponse {
     private Integer id;
 

@@ -1,6 +1,7 @@
 package com.example.Enotes.handler;
 
 import com.example.Enotes.dto.UserRequest;
+import com.example.Enotes.dto.UserResponse;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -11,6 +12,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class LoginResponse {
-    private UserRequest user;
+    private UserResponse user;
     private String token;
 }
