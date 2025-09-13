@@ -71,7 +71,7 @@ public class AuthServiceImpl implements AuthService {
         User save = userRepository.save(user);
         if(!ObjectUtils.isEmpty(save)){
             //mail
-            emailSend(save,url);
+            emailSendForRegister(save,url);
             return true;
         }
         return false;
@@ -79,6 +79,9 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public LoginResponse login(LoginRequest loginRequest) {
+        //First we have to check if the user is verified or not
+
+
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginRequest.getEmail(),loginRequest.getPassword()));
         if (authentication.isAuthenticated()){
@@ -93,7 +96,7 @@ public class AuthServiceImpl implements AuthService {
         return null;
     }
 
-    private void emailSend(User save,String url) throws Exception {
+    private void emailSendForRegister(User save,String url) throws Exception {
         String message="Hi,</b>[[username]]<br> Your account register successfully <br>"
                 +"<br> Click the below link and verify your account <br>"
                 +"<a href='[[url]]'>Click Here</a> <br><br>"
