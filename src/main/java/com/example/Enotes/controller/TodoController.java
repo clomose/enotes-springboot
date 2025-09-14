@@ -1,6 +1,7 @@
 package com.example.Enotes.controller;
 
 import com.example.Enotes.dto.TodoDto;
+import com.example.Enotes.endpoints.TodoEndpoint;
 import com.example.Enotes.service.TodoService;
 import com.example.Enotes.util.CommonUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,14 +14,12 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/todo")
-public class TodoController {
+public class TodoController implements TodoEndpoint {
 
     @Autowired
     private TodoService todoService;
 
-    @PostMapping("/")
-    @PreAuthorize("hasRole('USER')")
+    @Override
     public ResponseEntity<?> saveTodo(@RequestBody TodoDto todoDto) throws Exception{
         Boolean saveTodo =  todoService.saveTodo(todoDto);
         if(saveTodo){
@@ -29,15 +28,13 @@ public class TodoController {
         return CommonUtil.createErrorResponseMessage("Todo Not Saved",HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    @GetMapping("/{id}")
-    @PreAuthorize("hasRole('USER')")
+    @Override
     public ResponseEntity<?> getTodoById(@PathVariable Integer id) throws Exception{
         TodoDto todoById = todoService.getTodoById(id);
         return CommonUtil.createBuildResponse(todoById, HttpStatus.OK);
     }
 
-    @GetMapping("/list")
-    @PreAuthorize("hasRole('USER')")
+    @Override
     public ResponseEntity<?> getAllTodoByUSer() throws Exception{
         List<TodoDto> todo = todoService.getTodoByUser();
         if(CollectionUtils.isEmpty(todo)){

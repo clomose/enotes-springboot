@@ -2,6 +2,7 @@ package com.example.Enotes.controller;
 
 import com.example.Enotes.dto.LoginRequest;
 import com.example.Enotes.dto.UserRequest;
+import com.example.Enotes.endpoints.AuthEndpoint;
 import com.example.Enotes.handler.LoginResponse;
 import com.example.Enotes.service.AuthService;
 import com.example.Enotes.util.CommonUtil;
@@ -13,13 +14,12 @@ import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/v1/auth")
-public class AuthController {
+public class AuthController implements AuthEndpoint {
 
     @Autowired
     private AuthService authService;
 
-    @PostMapping("/")
+    @Override
     public ResponseEntity<?>  registerUser(@RequestBody UserRequest userDto, HttpServletRequest request) throws Exception
     {
         String url = CommonUtil.getUrl(request);
@@ -30,7 +30,7 @@ public class AuthController {
         return CommonUtil.createBuildResponseMessage("Registration Failed",HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    @PostMapping("/login")
+    @Override
     public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) throws Exception{
         LoginResponse loginResponse =  authService.login(loginRequest);
         if (ObjectUtils.isEmpty(loginResponse)){

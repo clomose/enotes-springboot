@@ -2,8 +2,7 @@ package com.example.Enotes.controller;
 
 import com.example.Enotes.dto.CategoryDto;
 import com.example.Enotes.dto.CategoryResponse;
-import com.example.Enotes.entity.Category;
-import com.example.Enotes.exception.ResourceNotFoundException;
+import com.example.Enotes.endpoints.CategoryEndpoint;
 import com.example.Enotes.service.CategoryService;
 import com.example.Enotes.util.CommonUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,18 +13,15 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Collection;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/v1/category")
-public class CategoryController {
+public class Category implements CategoryEndpoint {
 
     @Autowired
     private CategoryService categoryService;
 
-    @PostMapping("/save")
-    @PreAuthorize("hasRole('ADMIN')")
+    @Override
     public ResponseEntity<?> saveCategory(@RequestBody CategoryDto categoryDto){
         Boolean saveCategory = categoryService.saveCategory(categoryDto);
         if(saveCategory){
@@ -36,8 +32,7 @@ public class CategoryController {
 //        return new ResponseEntity<>("Not saved", HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    @GetMapping("/")
-    @PreAuthorize("hasRole('ADMIN')")
+    @Override
     public ResponseEntity<?> getAllCategory(){
         List<CategoryDto> categoriesDto = categoryService.getAllCategory();
         if(CollectionUtils.isEmpty(categoriesDto)){
@@ -47,8 +42,7 @@ public class CategoryController {
 //        return new ResponseEntity<>(categoriesDto, HttpStatus.OK);
     }
 
-    @GetMapping("/active")
-    @PreAuthorize("hasAnyRole('USER','ADMIN')")
+    @Override
     public ResponseEntity<?> getActiveCategory(){
         List<CategoryResponse> categoriesDto = categoryService.getActiveCategory();
         if(CollectionUtils.isEmpty(categoriesDto)){
@@ -58,8 +52,7 @@ public class CategoryController {
 //        return new ResponseEntity<>(categoriesDto, HttpStatus.OK);
     }
 
-    @GetMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @Override    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> getCategoryDetailsById(@PathVariable Integer id) throws Exception{
         //Without try catch Global Error Handler will execute
         CategoryDto categoryDto = categoryService.getCategoryById(id);
@@ -72,8 +65,7 @@ public class CategoryController {
 
     }
 
-    @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @Override
     public ResponseEntity<?> deleteCategoryById(@PathVariable Integer id){
         Boolean deleted = categoryService.deleteCategoryById(id);
         if(deleted){
