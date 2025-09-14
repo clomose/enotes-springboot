@@ -1,6 +1,7 @@
 package com.example.Enotes.controller;
 
 import com.example.Enotes.dto.PswdResetRequest;
+import com.example.Enotes.endpoints.HomeEndpoint;
 import com.example.Enotes.service.HomeService;
 import com.example.Enotes.service.UserService;
 import com.example.Enotes.util.CommonUtil;
@@ -13,8 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/v1/home")
-public class HomeController {
+public class HomeController implements HomeEndpoint {
 
     //logger object for HomeController class
     Logger log = LoggerFactory.getLogger(HomeController.class);
@@ -25,7 +25,7 @@ public class HomeController {
     @Autowired
     private UserService userService;
 
-    @GetMapping("/verify")
+    @Override
     public ResponseEntity<?> verifyUserAccount(@RequestParam Integer uid,@RequestParam String code) throws Exception{
         log.info("HomeController : verifyUserAccount() : Execution Start");
         Boolean verify = homeService.verifyAccount(uid,code);
@@ -35,19 +35,19 @@ public class HomeController {
         return CommonUtil.createErrorResponseMessage("Invalid Verification link",HttpStatus.BAD_REQUEST);
     }
 
-    @GetMapping("/send-email-reset")
+    @Override
     public ResponseEntity<?> sendEmailForPasswordReset(@RequestParam String email, HttpServletRequest request) throws Exception{
         userService.sendEmailPasswordReset(email,request);
         return CommonUtil.createBuildResponseMessage("Email Send Success!! Check Mail",HttpStatus.OK);
     }
 
-    @GetMapping("/verify-pswd-link")
+    @Override
     public ResponseEntity<?> verifyPasswordResetLink(@RequestParam Integer uid,@RequestParam String code) throws Exception{
         userService.verifyPswdResetLink(uid,code);
         return CommonUtil.createBuildResponseMessage("verification success",HttpStatus.OK);
     }
 
-    @PostMapping("/reset-pswd")
+    @Override
     public ResponseEntity<?> resetPassword(@RequestBody PswdResetRequest pswdResetRequest) throws  Exception{
         userService.resetPassword(pswdResetRequest);
         return CommonUtil.createBuildResponseMessage("Password reset successfully",HttpStatus.OK);

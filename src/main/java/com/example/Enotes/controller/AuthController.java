@@ -2,6 +2,7 @@ package com.example.Enotes.controller;
 
 import com.example.Enotes.dto.LoginRequest;
 import com.example.Enotes.dto.UserRequest;
+import com.example.Enotes.endpoints.AuthEndpoint;
 import com.example.Enotes.handler.LoginResponse;
 import com.example.Enotes.service.AuthService;
 import com.example.Enotes.util.CommonUtil;
@@ -15,13 +16,12 @@ import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @RestController
-@RequestMapping("/api/v1/auth")
-public class AuthController {
+public class AuthController implements AuthEndpoint {
 
     @Autowired
     private AuthService authService;
 
-    @PostMapping("/")
+    @Override
     public ResponseEntity<?>  registerUser(@RequestBody UserRequest userDto, HttpServletRequest request) throws Exception
     {
         log.info("AuthController : verifyUserAccount() : Execution Start");
@@ -35,7 +35,7 @@ public class AuthController {
         return CommonUtil.createBuildResponse("Register Successfully", HttpStatus.CREATED);
     }
 
-    @PostMapping("/login")
+    @Override
     public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) throws Exception{
         LoginResponse loginResponse =  authService.login(loginRequest);
         if (ObjectUtils.isEmpty(loginResponse)){
