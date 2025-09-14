@@ -12,7 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-public class Home implements HomeEndpoint {
+public class HomeController implements HomeEndpoint {
 
     @Autowired
     private HomeService homeService;

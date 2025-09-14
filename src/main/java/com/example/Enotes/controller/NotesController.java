@@ -20,7 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 @RestController
-public class Notes implements NotesEndpoint {
+public class NotesController implements NotesEndpoint {
 
     @Autowired
     private NotesService notesService;

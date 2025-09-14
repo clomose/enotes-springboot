@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-public class Category implements CategoryEndpoint {
+public class CategoryController implements CategoryEndpoint {
 
     @Autowired
     private CategoryService categoryService;
