@@ -22,7 +22,7 @@ public class CategoryController implements CategoryEndpoint {
     private CategoryService categoryService;
 
     @Override
-    public ResponseEntity<?> saveCategory(@RequestBody CategoryDto categoryDto){
+    public ResponseEntity<?> saveCategory(CategoryDto categoryDto){
         Boolean saveCategory = categoryService.saveCategory(categoryDto);
         if(saveCategory){
             return CommonUtil.createBuildResponseMessage("saved success",HttpStatus.CREATED);
@@ -52,8 +52,8 @@ public class CategoryController implements CategoryEndpoint {
 //        return new ResponseEntity<>(categoriesDto, HttpStatus.OK);
     }
 
-    @Override    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<?> getCategoryDetailsById(@PathVariable Integer id) throws Exception{
+    @Override
+    public ResponseEntity<?> getCategoryDetailsById(Integer id) throws Exception{
         //Without try catch Global Error Handler will execute
         CategoryDto categoryDto = categoryService.getCategoryById(id);
         if(ObjectUtils.isEmpty(categoryDto)){
@@ -66,7 +66,7 @@ public class CategoryController implements CategoryEndpoint {
     }
 
     @Override
-    public ResponseEntity<?> deleteCategoryById(@PathVariable Integer id){
+    public ResponseEntity<?> deleteCategoryById(Integer id){
         Boolean deleted = categoryService.deleteCategoryById(id);
         if(deleted){
             return CommonUtil.createBuildResponseMessage("Category Deleted Successfully",HttpStatus.OK);

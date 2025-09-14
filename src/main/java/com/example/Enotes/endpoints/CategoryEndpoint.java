@@ -1,6 +1,7 @@
 package com.example.Enotes.endpoints;
 
 import com.example.Enotes.dto.CategoryDto;
+import com.example.Enotes.util.Constants;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -9,22 +10,22 @@ import org.springframework.web.bind.annotation.*;
 public interface CategoryEndpoint {
 
     @PostMapping("/save")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize(Constants.ROLE_ADMIN)
     public ResponseEntity<?> saveCategory(@RequestBody CategoryDto categoryDto);
 
     @GetMapping("/")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize(Constants.ROLE_ADMIN)
     public ResponseEntity<?> getAllCategory();
 
     @GetMapping("/active")
-    @PreAuthorize("hasAnyRole('USER','ADMIN')")
+    @PreAuthorize(Constants.ANY_ROLE)
     public ResponseEntity<?> getActiveCategory();
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize(Constants.ROLE_ADMIN)
     public ResponseEntity<?> getCategoryDetailsById(@PathVariable Integer id) throws Exception;
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize(Constants.ROLE_ADMIN)
     public ResponseEntity<?> deleteCategoryById(@PathVariable Integer id);
 }
