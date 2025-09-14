@@ -6,12 +6,14 @@ import com.example.Enotes.handler.LoginResponse;
 import com.example.Enotes.service.AuthService;
 import com.example.Enotes.util.CommonUtil;
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/v1/auth")
 public class AuthController {
@@ -22,12 +24,15 @@ public class AuthController {
     @PostMapping("/")
     public ResponseEntity<?>  registerUser(@RequestBody UserRequest userDto, HttpServletRequest request) throws Exception
     {
+        log.info("AuthController : verifyUserAccount() : Execution Start");
         String url = CommonUtil.getUrl(request);
         Boolean register = authService.register(userDto,url);
-        if(register){
-            return CommonUtil.createBuildResponse("Register Successfully", HttpStatus.CREATED);
+        if(!register){
+            log.error("Error : {}","Register Failed");
+            return CommonUtil.createBuildResponseMessage("Registration Failed",HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        return CommonUtil.createBuildResponseMessage("Registration Failed",HttpStatus.INTERNAL_SERVER_ERROR);
+        log.info("AuthController : verifyUserAccount() : Execution End");
+        return CommonUtil.createBuildResponse("Register Successfully", HttpStatus.CREATED);
     }
 
     @PostMapping("/login")

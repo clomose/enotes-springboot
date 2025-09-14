@@ -5,6 +5,8 @@ import com.example.Enotes.service.HomeService;
 import com.example.Enotes.service.UserService;
 import com.example.Enotes.util.CommonUtil;
 import jakarta.servlet.http.HttpServletRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +16,9 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/v1/home")
 public class HomeController {
 
+    //logger object for HomeController class
+    Logger log = LoggerFactory.getLogger(HomeController.class);
+
     @Autowired
     private HomeService homeService;
 
@@ -22,6 +27,7 @@ public class HomeController {
 
     @GetMapping("/verify")
     public ResponseEntity<?> verifyUserAccount(@RequestParam Integer uid,@RequestParam String code) throws Exception{
+        log.info("HomeController : verifyUserAccount() : Execution Start");
         Boolean verify = homeService.verifyAccount(uid,code);
         if(verify){
             return CommonUtil.createBuildResponseMessage("Account verified successfully", HttpStatus.OK);

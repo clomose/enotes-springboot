@@ -14,6 +14,7 @@ import com.example.Enotes.repository.UserRepository;
 import com.example.Enotes.service.JwtService;
 import com.example.Enotes.service.AuthService;
 import com.example.Enotes.util.Validation;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -26,6 +27,7 @@ import org.springframework.util.ObjectUtils;
 import java.util.List;
 import java.util.UUID;
 
+@Slf4j
 @Service
 public class AuthServiceImpl implements AuthService {
 
@@ -55,6 +57,7 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public Boolean register(UserRequest userDto, String url) throws Exception{
+        log.info("AuthServiceImpl : register() : Execution Start");
         validation.userValidation(userDto);
 
         User user = mapper.map(userDto,User.class);
@@ -72,8 +75,11 @@ public class AuthServiceImpl implements AuthService {
         if(!ObjectUtils.isEmpty(save)){
             //mail
             emailSendForRegister(save,url);
+            log.info("Message : {}","email send successfully");
+            log.info("AuthServiceImpl : register() : Execution End");
             return true;
         }
+        log.error("Error : {}","User not saved");
         return false;
     }
 
