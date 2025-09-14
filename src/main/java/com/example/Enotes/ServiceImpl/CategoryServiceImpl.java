@@ -70,7 +70,7 @@ public class CategoryServiceImpl implements CategoryService {
     public CategoryDto getCategoryById(Integer id) throws Exception{
         Category findByCategory = categoryRepository.findByIdAndIsDeletedFalse(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Category not found with id "+id));
-        if(ObjectUtils.isEmpty(findByCategory)){
+        if(!ObjectUtils.isEmpty(findByCategory)){
             CategoryDto categoryDto = mapper.map(findByCategory, CategoryDto.class);
             return categoryDto;
         }
