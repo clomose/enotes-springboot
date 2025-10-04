@@ -270,7 +270,7 @@ public class NotesServiceImpl implements NotesService {
 
     @Override
     public void favouriteNotes(Integer noteId) throws Exception{
-        int userId = 2;
+        int userId = CommonUtil.getLoggedInUser().getId();
         Notes notes = notesRepository.findById(noteId).orElseThrow(() ->
                 new ResourceNotFoundException("Invalid notes id && not not found"));
         FavouriteNote favouriteNote = FavouriteNote.builder()
